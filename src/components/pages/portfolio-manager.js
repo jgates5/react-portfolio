@@ -12,14 +12,16 @@ export default class PortfolioManager extends Component {
       portfolioItems: []
     };
 
-    this.handleSuccessfulFormSubmission = this.handleSuccessfulFormSubmission.bind(this);   
-    this.handleFormSubmissionError = this.handleFormSubmissionError.bind(this);   
+    this.handleSuccessfulFormSubmission = this.handleSuccessfulFormSubmission.bind(
+      this
+    );
+    this.handleFormSubmissionError = this.handleFormSubmissionError.bind(this);
   }
 
   handleSuccessfulFormSubmission(portfolioItem) {
     this.setState({
       portfolioItems: [portfolioItem].concat(this.state.portfolioItems)
-    })
+    });
   }
 
   handleFormSubmissionError(error) {
@@ -28,9 +30,12 @@ export default class PortfolioManager extends Component {
 
   getPortfolioItems() {
     axios
-      .get("https://jgates5.devcamp.space/portfolio/portfolio_items?order_by=created_at&direction=desc", {
-        withCredentials: true
-      })
+      .get(
+        "https://jgates5.devcamp.space/portfolio/portfolio_items",
+        {
+          withCredentials: true
+        }
+      )
       .then(response => {
         this.setState({
           portfolioItems: [...response.data.portfolio_items]
