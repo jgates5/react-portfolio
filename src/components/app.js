@@ -3,20 +3,27 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import axios from "axios";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash, faSignOutAlt, faEdit } from "@fortawesome/free-solid-svg-icons";
+import {
+  faTrash,
+  faSignOutAlt,
+  faEdit,
+  faSpinner,
+  faPlusCircle
+} from "@fortawesome/free-solid-svg-icons";
+
 import NavigationContainer from "./navigation/navigation-container";
 import Home from "./pages/home";
 import About from "./pages/about";
 import Contact from "./pages/contact";
 import Blog from "./pages/blog";
 import BlogDetail from "./pages/blog-detail";
-
 import PortfolioManager from "./pages/portfolio-manager";
 import PortfolioDetail from "./portfolio/portfolio-detail";
 import Auth from "./pages/auth";
 import NoMatch from "./pages/no-match";
 
-library.add(faTrash, faSignOutAlt, faEdit);
+library.add(faTrash, faSignOutAlt, faEdit, faSpinner, faPlusCircle);
+
 export default class App extends Component {
   constructor(props) {
     super(props);
@@ -54,7 +61,6 @@ export default class App extends Component {
         withCredentials: true
       })
       .then(response => {
-        console.log(response)
         const loggedIn = response.data.logged_in;
         const loggedInStatus = this.state.loggedInStatus;
 
@@ -81,7 +87,11 @@ export default class App extends Component {
 
   authorizedPages() {
     return [
-      <Route key="portfolio-manager" path="/portfolio-manager" component={PortfolioManager} />
+      <Route
+        key="portfolio-manager"
+        path="/portfolio-manager"
+        component={PortfolioManager}
+      />
     ];
   }
 
@@ -90,8 +100,8 @@ export default class App extends Component {
       <div className="container">
         <Router>
           <div>
-            <NavigationContainer 
-              loggedInStatus={this.state.loggedInStatus} 
+            <NavigationContainer
+              loggedInStatus={this.state.loggedInStatus}
               handleSuccessfulLogout={this.handleSuccessfulLogout}
             />
 
@@ -111,10 +121,18 @@ export default class App extends Component {
 
               <Route path="/about-me" component={About} />
               <Route path="/contact" component={Contact} />
-              <Route path="/blog" component={Blog} />
+
+              <Route
+                path="/blog"
+                render={props => (
+                  <Blog {...props} loggedInStatus={this.state.loggedInStatus} />
+                )}
+              />
+
               <Route path="/b/:slug" component={BlogDetail} />
-              
-              {this.state.loggedInStatus === "LOGGED_IN" ? this.authorizedPages() : null}
+              {this.state.loggedInStatus === "LOGGED_IN" ? (
+                this.authorizedPages()
+              ) : null}
               <Route
                 exact
                 path="/portfolio/:slug"
